@@ -1,0 +1,28 @@
+{
+  "name": "WTA-Game",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adharshkamath/WTA-Game.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/adharshkamath/WTA-Game/issues"
+  },
+  "homepage": "https://github.com/adharshkamath/WTA-Game#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "jquery": "^3.5.1",
+    "mongodb": "^3.5.7",
+    "mongoose": "^5.9.13",
+    "phaser": "^3.23.0",
+    "socket.io": "^2.3.0"
+  }
+}
