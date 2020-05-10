@@ -1,5 +1,5 @@
 {
-  "name": "WTA-Game",
+  "name": "space-game",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -8,15 +8,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/adharshkamath/WTA-Game.git"
+    "url": "git+https://github.com/adharshkamath/Space-Game.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/adharshkamath/WTA-Game/issues"
+    "url": "https://github.com/adharshkamath/Space-Game/issues"
   },
-  "homepage": "https://github.com/adharshkamath/WTA-Game#readme",
+  "homepage": "https://github.com/adharshkamath/Space-Game#readme",
   "dependencies": {
     "express": "^4.17.1",
     "jquery": "^3.5.1",

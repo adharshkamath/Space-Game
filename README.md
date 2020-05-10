@@ -1,1 +1,1 @@
-# WTA-Game
+# Multiplayer HTML5 game
