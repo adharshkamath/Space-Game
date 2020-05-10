@@ -19,9 +19,9 @@
   "homepage": "https://github.com/adharshkamath/Space-Game#readme",
   "dependencies": {
     "express": "^4.17.1",
-    "jquery": "^3.5.1",
     "mongodb": "^3.5.7",
     "mongoose": "^5.9.13",
+    "nodemon": "^2.0.3",
     "phaser": "^3.23.0",
     "socket.io": "^2.3.0"
   }
