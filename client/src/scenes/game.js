@@ -1,4 +1,5 @@
 import Bullet from "../helpers/bullet";
+import io from "socket.io-client";
 export default class Game extends Phaser.Scene {
     constructor() {
         super({
@@ -9,6 +10,7 @@ export default class Game extends Phaser.Scene {
         this.shipControls;
         this.bullets;
         this.lastFired;
+        this.socket;
     }
 
 
@@ -26,6 +28,15 @@ export default class Game extends Phaser.Scene {
         this.addShip();
         this.cameras.main.setBounds(0, 0, window.innerWidth * 2, window.innerHeight * 2);
         this.cameras.main.startFollow(this.ship);
+        this.socket = io('http://localhost:3000');
+        this.socket.on('playerMoved', (locationInfo, shipID) => {
+            console.log(locationInfo);
+            console.log(shipID);
+        });
+        this.socket.on('shotFired', (bulletInfo, shipID) => {
+            console.log(bulletInfo);
+            console.log(shipID);
+        });
     }
 
     update(time, delta) {
@@ -49,16 +60,20 @@ export default class Game extends Phaser.Scene {
     }
 
     steerShip(time) {
+        var moved = false;
         if(this.shipControls.left.isDown) {
+            moved = true;
             this.ship.setAngularVelocity(-150);
         }
         else if (this.shipControls.right.isDown) {
+            moved = true;
             this.ship.setAngularVelocity(+150);
         }
         else {
             this.ship.setAngularVelocity(0);
         }
         if(this.shipControls.up.isDown) {
+            moved = true;
             this.physics.velocityFromRotation(this.ship.rotation, 750, this.ship.body.acceleration);
         }
         else {
@@ -69,8 +84,12 @@ export default class Game extends Phaser.Scene {
             if(bullet) {
                 bullet.fire(this.ship);
                 this.lastFired = time + 100;
+                this.socket.emit('shotFired', [bullet.x, bullet.y, bullet.angle, bullet.speed, bullet.rotation]); 
             }
         }
         this.physics.world.wrap(this.ship);
+        if(moved) {
+            this.socket.emit('playerMoved', [this.ship.x, this.ship.y, this.ship.angle]);
+        }
     }
 }
