@@ -1,14 +1,19 @@
 import Phaser from "phaser";
-import PreGame from "./scenes/pregame";
 import Game from "./scenes/game";
-import PostGame from "./scenes/postgame";
 
 const config = {
   type: Phaser.AUTO,
   parent: "phaser-example",
-  width: 800,
-  height: 600,
-  scene: [ PreGame, Game, PostGame ],
+  width: window.innerWidth,
+  height: window.innerHeight,
+  scene: [ Game ],
+  physics: {
+    default: 'arcade',
+    arcade: {
+      gravity: { y:0 },
+      debug: false
+    }
+  }
 };
 
 const game = new Phaser.Game(config);
