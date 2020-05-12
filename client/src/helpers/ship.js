@@ -7,30 +7,46 @@ export default class Ship {
 		player.ship.setDrag(300);
 		player.ship.setAngularDrag(400);
 		player.ship.setMaxVelocity(600);
-        player.ship.body.setCollideWorldBounds(true);
-        player.emitter = scene.add.particles(exhaustSprite).createEmitter({
+		player.ship.body.setCollideWorldBounds(true);
+		player.emitter = scene.add.particles(exhaustSprite).createEmitter({
 			speed: 100,
 			lifespan: {
-				onEmit: function (particle, key, t, value)
-				{
-					return Phaser.Math.Percent(player.ship.body.speed, 0, 300) * 2000;
-				}
+				onEmit: function () {
+					if (player.alive) {
+						return (
+							Phaser.Math.Percent(
+								player.ship.body.speed,
+								0,
+								300
+							) * 500
+						);
+					}
+				},
 			},
 			alpha: {
-				onEmit: function (particle, key, t, value)
-				{
-					return Phaser.Math.Percent(player.ship.body.speed, 0, 300);
-				}
+				onEmit: function () {
+					if (player.alive) {
+						return Phaser.Math.Percent(
+							player.ship.body.speed,
+							0,
+							300
+						);
+					}
+				},
 			},
 			angle: {
-				onEmit: function (particle, key, t, value)
-				{
-					var v = Phaser.Math.Between(-10, 10);
-					return (player.ship.angle - 180) + v;
-				}
+				onEmit: function () {
+					if (player.alive) {
+						return (
+							player.ship.angle -
+							180 +
+							Phaser.Math.Between(-10, 10)
+						);
+					}
+				},
 			},
 			scale: { start: 0.4, end: 0 },
-			blendMode: 'ADD'
+			blendMode: "ADD",
 		});
 		player.emitter.startFollow(player.ship);
 	}
@@ -38,8 +54,15 @@ export default class Ship {
 
 class PlayerShip extends Ship {
 	constructor(scene, player, x, y) {
-		super(scene, player, CST.ASSETS.SHIPS.PLAYER_SHIP, x, y, CST.ASSETS.SHIPS.PLAYER_EXHAUST);
-        player.steerShip = this.steerShip;
+		super(
+			scene,
+			player,
+			CST.ASSETS.SHIPS.PLAYER_SHIP,
+			x,
+			y,
+			CST.ASSETS.SHIPS.PLAYER_EXHAUST
+		);
+		player.steerShip = this.steerShip;
 		player.shipControls = scene.input.keyboard.addKeys({
 			up: Phaser.Input.Keyboard.KeyCodes.W,
 			right: Phaser.Input.Keyboard.KeyCodes.D,
@@ -89,6 +112,20 @@ class PlayerShip extends Ship {
 					bullet.rotation,
 				]);
 			}
+			if (player.powerups > 0) {
+				player.powerups -= 1;
+				var bullet = player.bullets.get();
+				if (bullet) {
+					bullet.fire(player.ship);
+					scene.socket.emit("shotFired", [
+						bullet.x,
+						bullet.y,
+						bullet.angle,
+						bullet.speed,
+						bullet.rotation,
+					]);
+				}
+			}
 		}
 		if (moved) {
 			scene.socket.emit("playerMoved", [
@@ -102,12 +139,19 @@ class PlayerShip extends Ship {
 
 class EnemyShip extends Ship {
 	constructor(scene, player, x, y) {
-		super(scene, player, CST.ASSETS.SHIPS.PLAYER_SHIP, x, y, CST.ASSETS.SHIPS.ENEMY_EXHAUST);
+		super(
+			scene,
+			player,
+			CST.ASSETS.SHIPS.PLAYER_SHIP,
+			x,
+			y,
+			CST.ASSETS.SHIPS.ENEMY_EXHAUST
+		);
 		player.bullets = scene.physics.add.group({
 			classType: EnemyBullet,
 			maxsize: 100,
 			runChildUpdate: true,
-        });
+		});
 		return player;
 	}
 

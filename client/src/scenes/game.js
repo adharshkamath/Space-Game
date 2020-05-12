@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import io from "socket.io-client";
 import { PlayerShip, EnemyShip } from "../helpers/ship";
+import { Extras } from "../helpers/extras";
 import CST from "../cst";
 
 export default class Game extends Phaser.Scene {
@@ -8,19 +9,18 @@ export default class Game extends Phaser.Scene {
 		super({
 			key: CST.SCENES.GAME,
 		});
-		this.backgroundImage;
-		this.ship;
-		this.shipControls;
-		this.bullets;
-		this.lastFired;
 		this.socket;
 		this.player = {};
+		this.player.alive = true;
+		this.player.powerups = 0;
 		this.enemies;
+		this.extras = {};
 	}
 
 	preload() {}
 
 	create() {
+		let self = this;
 		this.setBackground(CST.ASSETS.BACKGROUNDS.GAME_BG);
 		this.player = new PlayerShip(
 			this,
@@ -50,10 +50,16 @@ export default class Game extends Phaser.Scene {
 			console.log(bulletInfo);
 			console.log(shipID);
 		});
+		this.extras = new Extras(self);
 	}
 
 	update(time, delta) {
-		this.player.steerShip(this, this.player, time);
+		if (this.player.alive) {
+			this.player.steerShip(this, this.player, time);
+		} else {
+			this.player.ship.destroy();
+			return;
+		}
 	}
 
 	setBackground(image) {

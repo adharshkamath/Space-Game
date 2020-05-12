@@ -21,24 +21,32 @@ export default class LoadScene extends Phaser.Scene {
 			CST.ASSETS.SHIPS.PLAYER_BULLET,
 			"src/assets/blue_bullet.png"
 		);
-		this.load.image(
-			CST.ASSETS.SHIPS.ENEMY_SHIP,
-			"src/assets/red_ship.png"
-		);
+		this.load.image(CST.ASSETS.SHIPS.ENEMY_SHIP, "src/assets/red_ship.png");
 		this.load.image(
 			CST.ASSETS.SHIPS.ENEMY_BULLET,
 			"src/assets/red_bullet.png"
 		);
 
+		this.load.image(CST.ASSETS.SHIPS.PLAYER_EXHAUST, "src/assets/blue.png");
+
+		this.load.image(CST.ASSETS.SHIPS.ENEMY_EXHAUST, "src/assets/red.png");
+
 		this.load.image(
-			CST.ASSETS.SHIPS.PLAYER_EXHAUST,
-			"src/assets/blue.png"
+			CST.ASSETS.EXTRAS.BIG_ASTEROID,
+			"src/assets/meteor_big.png"
 		);
 
 		this.load.image(
-			CST.ASSETS.SHIPS.ENEMY_EXHAUST,
-			"src/assets/red.png",
+			CST.ASSETS.EXTRAS.MED_ASTROID,
+			"src/assets/meteor_med.png"
 		);
+
+		this.load.image(
+			CST.ASSETS.EXTRAS.SMALL_ASTEROID,
+			"src/assets/meteor_tiny.png"
+		);
+
+		this.load.image(CST.ASSETS.EXTRAS.BOOST, "src/assets/powerup_bolt.png");
 
 		let loadingBar = this.add.graphics({
 			fillStyle: { color: 0xffffff },
