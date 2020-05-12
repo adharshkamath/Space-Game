@@ -2,18 +2,44 @@ import { PlayerBullet, EnemyBullet } from "./bullet";
 import CST from "../cst";
 
 export default class Ship {
-	constructor(scene, player, shipSprite, x, y) {
+	constructor(scene, player, shipSprite, x, y, exhaustSprite) {
 		player.ship = scene.physics.add.sprite(x, y, shipSprite).setDepth(2);
 		player.ship.setDrag(300);
 		player.ship.setAngularDrag(400);
 		player.ship.setMaxVelocity(600);
-		player.ship.body.setCollideWorldBounds(true);
+        player.ship.body.setCollideWorldBounds(true);
+        player.emitter = scene.add.particles(exhaustSprite).createEmitter({
+			speed: 100,
+			lifespan: {
+				onEmit: function (particle, key, t, value)
+				{
+					return Phaser.Math.Percent(player.ship.body.speed, 0, 300) * 2000;
+				}
+			},
+			alpha: {
+				onEmit: function (particle, key, t, value)
+				{
+					return Phaser.Math.Percent(player.ship.body.speed, 0, 300);
+				}
+			},
+			angle: {
+				onEmit: function (particle, key, t, value)
+				{
+					var v = Phaser.Math.Between(-10, 10);
+					return (player.ship.angle - 180) + v;
+				}
+			},
+			scale: { start: 0.4, end: 0 },
+			blendMode: 'ADD'
+		});
+		player.emitter.startFollow(player.ship);
 	}
 }
 
 class PlayerShip extends Ship {
 	constructor(scene, player, x, y) {
-		super(scene, player, CST.ASSETS.SHIPS.PLAYER_SHIP, x, y);
+		super(scene, player, CST.ASSETS.SHIPS.PLAYER_SHIP, x, y, CST.ASSETS.SHIPS.PLAYER_EXHAUST);
+        player.steerShip = this.steerShip;
 		player.shipControls = scene.input.keyboard.addKeys({
 			up: Phaser.Input.Keyboard.KeyCodes.W,
 			right: Phaser.Input.Keyboard.KeyCodes.D,
@@ -26,7 +52,6 @@ class PlayerShip extends Ship {
 			runChildUpdate: true,
 		});
 		player.lastFired = 100;
-		player.steerShip = this.steerShip;
 		return player;
 	}
 
@@ -77,12 +102,12 @@ class PlayerShip extends Ship {
 
 class EnemyShip extends Ship {
 	constructor(scene, player, x, y) {
-		super(scene, player, CST.ASSETS.SHIPS.PLAYER_SHIP, x, y);
+		super(scene, player, CST.ASSETS.SHIPS.PLAYER_SHIP, x, y, CST.ASSETS.SHIPS.ENEMY_EXHAUST);
 		player.bullets = scene.physics.add.group({
 			classType: EnemyBullet,
 			maxsize: 100,
 			runChildUpdate: true,
-		});
+        });
 		return player;
 	}
 

@@ -10,8 +10,10 @@ const CST = {
     SHIPS: {
       PLAYER_SHIP: "playerShip",
       PLAYER_BULLET: "playerBullet",
+      PLAYER_EXHAUST: "playerExhaust",
       ENEMY_SHIP: "enemyShip",
-      ENEMY_BULLET: "enemyBullet"
+      ENEMY_BULLET: "enemyBullet",
+      ENEMY_EXHAUST: "enemyExhaust",
     },
     EXTRAS: {
       ASTEROID: "asteroid",

@@ -30,6 +30,16 @@ export default class LoadScene extends Phaser.Scene {
 			"src/assets/red_bullet.png"
 		);
 
+		this.load.image(
+			CST.ASSETS.SHIPS.PLAYER_EXHAUST,
+			"src/assets/blue.png"
+		);
+
+		this.load.image(
+			CST.ASSETS.SHIPS.ENEMY_EXHAUST,
+			"src/assets/red.png",
+		);
+
 		let loadingBar = this.add.graphics({
 			fillStyle: { color: 0xffffff },
 		});
