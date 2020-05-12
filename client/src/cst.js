@@ -1,6 +1,7 @@
 const CST = {
   SCENES: {
-    GAME: "Game",
+    LOAD: "LoadScene",
+    GAME: "GameScene",
   },
   ASSETS: {
     BACKGROUNDS: {

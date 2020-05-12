@@ -16,15 +16,15 @@ export default class Game extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image(
-      CST.ASSETS.BACKGROUNDS.GAME_BG,
-      "src/assets/background.jpeg"
-    );
-    this.load.image(CST.ASSETS.SHIPS.PLAYER_SHIP, "src/assets/blue_ship.png");
-    this.load.image(
-      CST.ASSETS.SHIPS.PLAYER_BULLET,
-      "src/assets/blue_bullet.png"
-    );
+    // this.load.image(
+    //   CST.ASSETS.BACKGROUNDS.GAME_BG,
+    //   "src/assets/background.jpeg"
+    // );
+    // this.load.image(CST.ASSETS.SHIPS.PLAYER_SHIP, "src/assets/blue_ship.png");
+    // this.load.image(
+    //   CST.ASSETS.SHIPS.PLAYER_BULLET,
+    //   "src/assets/blue_bullet.png"
+    // );
   }
 
   create() {
