@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "nodemon server.js",
-    "dev": "concurrently \"nodemon server.js\" \"cd client && webpack-dev-server --config webpack/base.js --open\""
+    "dev": "concurrently \"nodemon server.js\" \"cd client && npm start\""
   },
   "repository": {
     "type": "git",
