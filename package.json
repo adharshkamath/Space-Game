@@ -11,7 +11,13 @@
     "type": "git",
     "url": "git+https://github.com/adharshkamath/Space-Game.git"
   },
-  "keywords": ["html5 game","express","mongodb","socket io","phaser 3"],
+  "keywords": [
+    "html5 game",
+    "express",
+    "mongodb",
+    "socket io",
+    "phaser 3"
+  ],
   "author": "Adharsh Kamath, Sriram Rao",
   "license": "ISC",
   "bugs": {
@@ -24,7 +30,8 @@
     "mongoose": "^5.9.13",
     "socket.io": "^2.3.0"
   },
-  "devDependencies":{
+  "devDependencies": {
+    "concurrently": "^5.2.0",
     "nodemon": "^2.0.3"
   }
 }
