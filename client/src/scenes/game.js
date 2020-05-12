@@ -27,6 +27,7 @@ export default class Game extends Phaser.Scene {
         this.add.image(window.innerWidth, window.innerHeight, "backgound").setOrigin(0).setFlipX(true).setFlipY(true);
         this.addShip();
         this.cameras.main.setBounds(0, 0, window.innerWidth * 2, window.innerHeight * 2);
+        this.physics.world.setBounds(0, 0, window.innerWidth * 2, window.innerHeight * 2);
         this.cameras.main.startFollow(this.ship);
         this.socket = io('http://localhost:3000');
         this.socket.on('playerMoved', (locationInfo, shipID) => {
@@ -49,6 +50,7 @@ export default class Game extends Phaser.Scene {
         this.ship.setDrag(300);
         this.ship.setAngularDrag(400);
         this.ship.setMaxVelocity(600);
+        this.ship.body.setCollideWorldBounds(true);
         this.shipControls = this.input.keyboard.createCursorKeys();
         this.fire = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
         this.bullets = this.physics.add.group({
@@ -87,7 +89,6 @@ export default class Game extends Phaser.Scene {
                 this.socket.emit('shotFired', [bullet.x, bullet.y, bullet.angle, bullet.speed, bullet.rotation]); 
             }
         }
-        this.physics.world.wrap(this.ship);
         if(moved) {
             this.socket.emit('playerMoved', [this.ship.x, this.ship.y, this.ship.angle]);
         }
