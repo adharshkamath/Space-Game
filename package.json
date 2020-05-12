@@ -2,16 +2,17 @@
   "name": "space-game",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "start": "nodemon server.js"
+    "start": "nodemon server.js",
+    "dev": "concurrently \"nodemon server.js\" \"cd client && webpack-dev-server --config webpack/base.js --open\""
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/adharshkamath/Space-Game.git"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["html5 game","express","mongodb","socket io","phaser 3"],
+  "author": "Adharsh Kamath, Sriram Rao",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/adharshkamath/Space-Game/issues"
@@ -21,8 +22,9 @@
     "express": "^4.17.1",
     "mongodb": "^3.5.7",
     "mongoose": "^5.9.13",
-    "nodemon": "^2.0.3",
-    "phaser": "^3.23.0",
     "socket.io": "^2.3.0"
+  },
+  "devDependencies":{
+    "nodemon": "^2.0.3"
   }
 }
