@@ -6,8 +6,8 @@ class Asteroids {
 		var asteroids = scene.physics.add.group({
 			key: CST.ASSETS.EXTRAS.BIG_ASTEROID,
 			quantity: 2,
-			bounceX: 1,
-			bounceY: 1,
+			bounceX: 0.6,
+			bounceY: 0.6,
 			collideWorldBounds: true,
 			velocityX: Phaser.Math.Between(-300, 300),
 			velocityY: Phaser.Math.Between(-300, 300),
@@ -26,11 +26,11 @@ class Meteors {
 		var asteroids = scene.physics.add.group({
 			key: CST.ASSETS.EXTRAS.MED_ASTROID,
 			quantity: 3,
-			bounceX: 1,
-			bounceY: 1,
+			bounceX: 0.8,
+			bounceY: 0.8,
 			collideWorldBounds: true,
-			velocityX: Phaser.Math.Between(-700, 700),
-			velocityY: Phaser.Math.Between(-700, 700),
+			velocityX: Phaser.Math.Between(-500, 500),
+			velocityY: Phaser.Math.Between(-500, 500),
 		});
 		Phaser.Actions.RandomRectangle(
 			asteroids.getChildren(),
@@ -49,8 +49,8 @@ class Rocks {
 			bounceX: 1,
 			bounceY: 1,
 			collideWorldBounds: true,
-			velocityX: Phaser.Math.Between(-1000, 1000),
-			velocityY: Phaser.Math.Between(-1000, 1000),
+			velocityX: Phaser.Math.Between(-700, 700),
+			velocityY: Phaser.Math.Between(-700, 700),
 		});
 		Phaser.Actions.RandomRectangle(
 			asteroids.getChildren(),
@@ -96,6 +96,21 @@ class Extras {
 		scene.physics.add.collider(extras.meteors, extras.rocks);
 		scene.physics.add.collider(extras.meteors, scene.player.ship);
 		scene.physics.add.collider(extras.rocks, scene.player.ship);
+		scene.physics.add.collider(extras.rocks, scene.player.bullets, function(bullet, rock) {
+			rock.destroy();
+			bullet.destroy();
+		});
+		scene.physics.add.collider(extras.meteors, scene.player.bullets, function(bullet, meteor) {
+			meteor.destroy();
+			bullet.destroy();
+		});
+		scene.physics.add.collider(extras.powerups, scene.player.bullets, function(bullet, powerup) {
+			powerup.destroy();
+			bullet.destroy();
+		});
+		scene.physics.add.collider(extras.asteroids, scene.player.bullets, function(asteroid, bullet) {
+			bullet.destroy();
+		});
 		scene.physics.add.collider(
 			extras.asteroids,
 			scene.player.ship,
