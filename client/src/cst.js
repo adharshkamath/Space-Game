@@ -8,8 +8,14 @@ const CST = {
       GAME_BG: "gameBackground",
     },
     SHIPS: {
-      PLAYER_SHIP: "playership",
-      PLAYER_BULLET: "playerbullet",
+      PLAYER_SHIP: "playerShip",
+      PLAYER_BULLET: "playerBullet",
+      ENEMY_SHIP: "enemyShip",
+      ENEMY_BULLET: "enemyBullet"
+    },
+    EXTRAS: {
+      ASTEROID: "asteroid",
+      BOOST: "boost",
     },
   },
 };
