@@ -1,3 +1,4 @@
+import Phaser from "phaser";
 import Bullet from "../helpers/bullet";
 import io from "socket.io-client";
 export default class Game extends Phaser.Scene {
@@ -51,8 +52,12 @@ export default class Game extends Phaser.Scene {
         this.ship.setAngularDrag(400);
         this.ship.setMaxVelocity(600);
         this.ship.body.setCollideWorldBounds(true);
-        this.shipControls = this.input.keyboard.createCursorKeys();
-        this.fire = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+        this.shipControls = this.input.keyboard.addKeys({
+            'up': Phaser.Input.Keyboard.KeyCodes.W,
+            'right': Phaser.Input.Keyboard.KeyCodes.D,
+            'left': Phaser.Input.Keyboard.KeyCodes.A,
+            'fire': Phaser.Input.Keyboard.KeyCodes.SPACE,
+        });
         this.bullets = this.physics.add.group({
             classType: Bullet,
             maxSize: 100,
@@ -81,7 +86,7 @@ export default class Game extends Phaser.Scene {
         else {
             this.ship.setAcceleration(0);
         }
-        if(this.fire.isDown && time > this.lastFired) {
+        if(this.shipControls.fire.isDown && time > this.lastFired) {
             var bullet = this.bullets.get();
             if(bullet) {
                 bullet.fire(this.ship);
