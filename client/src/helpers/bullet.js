@@ -1,8 +1,7 @@
 import CST from "../cst";
-
-export default class Bullet extends Phaser.Physics.Arcade.Image {
-	constructor(scene) {
-		super(scene, 0, 0, CST.ASSETS.SHIPS.PLAYER_BULLET);
+class Bullet extends Phaser.Physics.Arcade.Image {
+	constructor(scene, sprite) {
+		super(scene, 0, 0, sprite);
 		this.setBlendMode(1);
 		this.setDepth(1);
 		this.speed = 1000;
@@ -34,3 +33,31 @@ export default class Bullet extends Phaser.Physics.Arcade.Image {
 		}
 	}
 }
+class PlayerBullet extends Bullet {
+	constructor(scene) {
+		super(scene, CST.ASSETS.SHIPS.PLAYER_BULLET);
+	}
+
+	fire(ship) {
+		super.fire(ship);
+	}
+
+	update(time, delta) {
+		super.update(time, delta);
+	}
+}
+class EnemyBullet extends Bullet {
+	constructor(scene) {
+		super(scene, CST.ASSETS.SHIPS.ENEMY_BULLET);
+	}
+
+	fire(ship) {
+		super.fire(ship);
+	}
+
+	update(time, delta) {
+		super.update(time, delta);
+	}
+}
+
+export { PlayerBullet, EnemyBullet };
