@@ -18,7 +18,10 @@
     "socket io",
     "phaser 3"
   ],
-  "author": "Adharsh Kamath, Sriram Rao",
+  "author": [
+    "Adharsh Kamath",
+    "Sriram Rao"
+  ],
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/adharshkamath/Space-Game/issues"
