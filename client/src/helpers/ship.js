@@ -120,20 +120,6 @@ class PlayerShip extends Ship {
 					bullet.rotation,
 				]);
 			}
-			if (player.powerups > 0) {
-				player.powerups -= 1;
-				var bullet = player.bullets.get();
-				if (bullet) {
-					bullet.fire(player.ship);
-					scene.socket.emit("shotFired", [
-						bullet.x,
-						bullet.y,
-						bullet.angle,
-						bullet.speed,
-						bullet.rotation,
-					]);
-				}
-			}
 		}
 		if (moved) {
 			scene.socket.emit("playerMoved", [
