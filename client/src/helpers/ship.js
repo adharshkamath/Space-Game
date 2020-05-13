@@ -76,6 +76,12 @@ class PlayerShip extends Ship {
 			runChildUpdate: true,
 		});
 		player.lastFired = 100;
+		scene.anims.create({
+			key: CST.ASSETS.SHIPS.EXPLOSION,
+			duration: 1000,
+			repeat: 0,
+			frames: scene.anims.generateFrameNames(CST.ASSETS.SHIPS.EXPLOSION)
+		});
 		return player;
 	}
 

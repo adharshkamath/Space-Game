@@ -17,6 +17,12 @@ class Asteroids {
 			scene.physics.world.bounds
 		);
 		scene.physics.add.collider(asteroids);
+		scene.anims.create({
+			key: CST.ASSETS.EXTRAS.BIG_ASTEROID_EXPLOSION,
+			duration: 1000,
+			repeat: 0,
+			frames: scene.anims.generateFrameNames(CST.ASSETS.EXTRAS.BIG_ASTEROID_EXPLOSION)
+		});
 		return asteroids;
 	}
 }
@@ -116,10 +122,14 @@ class Extras {
 			scene.player.ship,
 			function (ship, asteroid) {
 				if (scene.player.powerups == 0) {
+					scene.add.sprite(ship.x, ship.y, "dummySprite").setScale(3, 3).play(CST.ASSETS.SHIPS.EXPLOSION);
+					scene.sound.play(CST.ASSETS.SHIPS.EXPLOSION_AUDIO);
 					scene.player.alive = false;
 					ship.setActive(false);
 				} else {
 					scene.player.powerups--;
+					scene.add.sprite(asteroid.x, asteroid.y, "dummySprite").setScale(1.5, 1.5).play(CST.ASSETS.EXTRAS.BIG_ASTEROID_EXPLOSION);
+					scene.sound.play(CST.ASSETS.SHIPS.EXPLOSION_AUDIO);
 					asteroid.destroy();
 				}
 			}
