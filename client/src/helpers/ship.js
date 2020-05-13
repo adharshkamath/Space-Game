@@ -1,3 +1,4 @@
+import Phaser from "phaser";
 import { PlayerBullet, EnemyBullet } from "./bullet";
 import CST from "../cst";
 
@@ -100,6 +101,7 @@ class PlayerShip extends Ship {
 			player.ship.setAcceleration(0);
 		}
 		if (player.shipControls.fire.isDown && time > player.lastFired) {
+			scene.sound.play(CST.ASSETS.SHIPS.LASER_AUDIO);
 			var bullet = player.bullets.get();
 			if (bullet) {
 				bullet.fire(player.ship);

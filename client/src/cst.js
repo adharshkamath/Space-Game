@@ -14,6 +14,7 @@ const CST = {
 			ENEMY_SHIP: "enemyShip",
 			ENEMY_BULLET: "enemyBullet",
 			ENEMY_EXHAUST: "enemyExhaust",
+			LASER_AUDIO: "laserAudio",
 		},
 		EXTRAS: {
 			BIG_ASTEROID: "asteroid_big",

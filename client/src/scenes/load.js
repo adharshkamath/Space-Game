@@ -48,6 +48,11 @@ export default class LoadScene extends Phaser.Scene {
 
 		this.load.image(CST.ASSETS.EXTRAS.BOOST, "src/assets/powerup_bolt.png");
 
+		this.load.audio(
+			CST.ASSETS.SHIPS.LASER_AUDIO,
+			"src/assets/laser_audio.ogg"
+		);
+
 		let loadingBar = this.add.graphics({
 			fillStyle: { color: 0xffffff },
 		});
