@@ -138,6 +138,7 @@ class Extras {
 			extras.powerups,
 			scene.player.ship,
 			function (ship, powerup) {
+				scene.sound.play(CST.ASSETS.EXTRAS.BOOST_AUDIO);
 				scene.player.powerups++;
 				powerup.destroy();
 			}

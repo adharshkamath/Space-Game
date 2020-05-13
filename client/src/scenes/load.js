@@ -62,12 +62,17 @@ export default class LoadScene extends Phaser.Scene {
 		this.load.audio(
 			CST.ASSETS.SHIPS.EXPLOSION_AUDIO,
 			"src/assets/explosion.mp3"
-		)
+		);
 
 		this.load.spritesheet(
 			CST.ASSETS.EXTRAS.BIG_ASTEROID_EXPLOSION,
 			"src/assets/asteroidExplosion.png",
 			{ frameWidth: 100, frameHeight: 100 }
+		);
+
+		this.load.audio(
+			CST.ASSETS.EXTRAS.BOOST_AUDIO,
+			"src/assets/powerup.mp3"
 		);
 
 		let loadingBar = this.add.graphics({
