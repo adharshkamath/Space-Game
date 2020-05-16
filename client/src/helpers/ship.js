@@ -2,33 +2,32 @@ import Phaser from "phaser";
 import { PlayerBullet, EnemyBullet } from "./bullet";
 import CST from "../cst";
 
-export default class Ship {
-	constructor(scene, player, shipSprite, x, y, exhaustSprite) {
-		player.ship = scene.physics.add.sprite(x, y, shipSprite).setDepth(2);
-		player.ship.setDrag(300);
-		player.ship.setAngularDrag(400);
-		player.ship.setMaxVelocity(600);
-		player.ship.body.setCollideWorldBounds(true);
-		player.emitter = scene.add.particles(exhaustSprite).createEmitter({
+class Ship {
+	constructor(scene, shipSprite, x, y, exhaustSprite) {
+		let self = this;
+		this.alive = true;
+		this.ship = scene.physics.add.sprite(x, y, shipSprite).setDepth(2);
+		this.ship.setDrag(300);
+		this.ship.setAngularDrag(400);
+		this.ship.setMaxVelocity(600);
+		this.ship.body.setCollideWorldBounds(true);
+		this.emitter = scene.add.particles(exhaustSprite).createEmitter({
 			speed: 100,
 			lifespan: {
 				onEmit: function () {
-					if (player.alive) {
+					if (self.alive) {
 						return (
-							Phaser.Math.Percent(
-								player.ship.body.speed,
-								0,
-								300
-							) * 500
+							Phaser.Math.Percent(self.ship.body.speed, 0, 300) *
+							500
 						);
 					}
 				},
 			},
 			alpha: {
 				onEmit: function () {
-					if (player.alive) {
+					if (self.alive) {
 						return Phaser.Math.Percent(
-							player.ship.body.speed,
+							self.ship.body.speed,
 							0,
 							300
 						);
@@ -37,11 +36,9 @@ export default class Ship {
 			},
 			angle: {
 				onEmit: function () {
-					if (player.alive) {
+					if (self.alive) {
 						return (
-							player.ship.angle -
-							180 +
-							Phaser.Math.Between(-10, 10)
+							self.ship.angle - 180 + Phaser.Math.Between(-10, 10)
 						);
 					}
 				},
@@ -49,116 +46,130 @@ export default class Ship {
 			scale: { start: 0.4, end: 0 },
 			blendMode: "ADD",
 		});
-		player.emitter.startFollow(player.ship);
+		this.emitter.startFollow(this.ship);
+		scene.anims.create({
+			key: CST.ASSETS.SHIPS.EXPLOSION,
+			duration: 1000,
+			repeat: 0,
+			frames: scene.anims.generateFrameNames(CST.ASSETS.SHIPS.EXPLOSION),
+		});
+		this.powerups = 0;
 	}
 }
 
 class PlayerShip extends Ship {
-	constructor(scene, player, x, y) {
+	constructor(scene, x, y) {
 		super(
 			scene,
-			player,
 			CST.ASSETS.SHIPS.PLAYER_SHIP,
 			x,
 			y,
 			CST.ASSETS.SHIPS.PLAYER_EXHAUST
 		);
-		player.steerShip = this.steerShip;
-		player.shipControls = scene.input.keyboard.addKeys({
+		this.ship.angle = Phaser.Math.Between(0, 360);
+		this.shipControls = scene.input.keyboard.addKeys({
 			up: Phaser.Input.Keyboard.KeyCodes.W,
 			right: Phaser.Input.Keyboard.KeyCodes.D,
 			left: Phaser.Input.Keyboard.KeyCodes.A,
 			fire: Phaser.Input.Keyboard.KeyCodes.SPACE,
 		});
-		player.bullets = scene.physics.add.group({
+		this.bullets = scene.physics.add.group({
 			classType: PlayerBullet,
 			maxsize: 100,
 			runChildUpdate: true,
 		});
-		player.lastFired = 100;
-		scene.anims.create({
-			key: CST.ASSETS.SHIPS.EXPLOSION,
-			duration: 1000,
-			repeat: 0,
-			frames: scene.anims.generateFrameNames(CST.ASSETS.SHIPS.EXPLOSION)
-		});
-		return player;
+		this.lastFired = 100;
 	}
 
-	steerShip(scene, player, time) {
-		var moved = false;
-		if (player.shipControls.left.isDown) {
+	steerShip(scene, time) {
+		let moved = false;
+		let wasdf = [false, false, false, false];
+		if (this.shipControls.left.isDown) {
 			moved = true;
-			player.ship.setAngularVelocity(-150);
-		} else if (player.shipControls.right.isDown) {
+			wasdf[1] = true;
+			this.ship.setAngularVelocity(-150);
+		} else if (this.shipControls.right.isDown) {
 			moved = true;
-			player.ship.setAngularVelocity(+150);
+			wasdf[2] = true;
+			this.ship.setAngularVelocity(+150);
 		} else {
-			player.ship.setAngularVelocity(0);
+			this.ship.setAngularVelocity(0);
 		}
-		if (player.shipControls.up.isDown) {
+		if (this.shipControls.up.isDown) {
 			moved = true;
+			wasdf[0] = true;
 			scene.physics.velocityFromRotation(
-				player.ship.rotation,
+				this.ship.rotation,
 				750,
-				player.ship.body.acceleration
+				this.ship.body.acceleration
 			);
 		} else {
-			player.ship.setAcceleration(0);
+			this.ship.setAcceleration(0);
 		}
-		if (player.shipControls.fire.isDown && time > player.lastFired) {
+		if (this.shipControls.fire.isDown && time > this.lastFired) {
 			scene.sound.play(CST.ASSETS.SHIPS.LASER_AUDIO);
-			var bullet = player.bullets.get();
+			var bullet = this.bullets.get();
 			if (bullet) {
-				bullet.fire(player.ship);
-				player.lastFired = time + 100;
-				scene.socket.emit("shotFired", [
-					bullet.x,
-					bullet.y,
-					bullet.angle,
-					bullet.speed,
-					bullet.rotation,
-				]);
+				bullet.fire(this.ship);
+				this.lastFired = time + 100;
 			}
+			wasdf[3] = true;
 		}
-		if (moved) {
-			scene.socket.emit("playerMoved", [
-				player.ship.x,
-				player.ship.y,
-				player.ship.angle,
-			]);
-		}
+		scene.socket.emit("playerMoved", wasdf);
 	}
 }
 
 class EnemyShip extends Ship {
-	constructor(scene, player, x, y) {
+	constructor(scene, x, y, angle, shipID) {
 		super(
 			scene,
-			player,
-			CST.ASSETS.SHIPS.PLAYER_SHIP,
+			CST.ASSETS.SHIPS.ENEMY_SHIP,
 			x,
 			y,
 			CST.ASSETS.SHIPS.ENEMY_EXHAUST
 		);
-		player.bullets = scene.physics.add.group({
+		this.id = shipID;
+		this.ship.angle = angle;
+		scene.physics.add.collider(scene.player.ship, this.ship);
+		this.bullets = scene.physics.add.group({
 			classType: EnemyBullet,
 			maxsize: 100,
 			runChildUpdate: true,
 		});
-		return player;
 	}
 
-	moveShip(player, newLocation) {
-		player.ship.x = newLocation.x;
-		player.ship.y = newLocation.y;
-		player.ship.angle = newLocation.angle;
+	moveShip(scene, move) {
+		if (move[1]) {
+			this.ship.setAngularVelocity(-150);
+		} else if (move[2]) {
+			this.ship.setAngularVelocity(+150);
+		} else {
+			this.ship.setAngularVelocity(0);
+		}
+		if (move[0]) {
+			scene.physics.velocityFromRotation(
+				this.ship.rotation,
+				750,
+				this.ship.body.acceleration
+			);
+		} else {
+			this.ship.setAcceleration(0);
+		}
+		if (move[3]) {
+			if (this.alive) {
+				this.fireBullet(scene);
+			} else {
+				this.ship.destroy();
+				return;
+			}
+		}
 	}
 
-	fireBullet(player) {
-		var bullet = player.bullets.get();
+	fireBullet(scene) {
+		scene.sound.play(CST.ASSETS.SHIPS.LASER_AUDIO);
+		var bullet = this.bullets.get();
 		if (bullet) {
-			bullet.fire(player.ship);
+			bullet.fire(this.ship);
 		}
 	}
 }
