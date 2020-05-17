@@ -47,6 +47,10 @@ io.on("connection", (socket) => {
 		}
 	});
 
+	socket.on("chatMessage", function(message) {
+		socket.broadcast.to(firstPlayer).emit("chatMessage", message);
+	});
+
 	socket.on("extrasData", function (data) {
 		socket.broadcast.to(firstPlayer).emit("extrasData", data);
 	});
@@ -82,6 +86,9 @@ io.on("connection", (socket) => {
 			.emit("playerMoved", moveMade, socket.id);
 	});
 	socket.on("disconnect", function () {
+		if(rooms[roomNumber].length == 2) {
+			io.to(firstPlayer).emit("youWon");
+		}
 		rooms[roomNumber] = rooms[roomNumber].filter(function (value) {
 			return value[0] != socket.id;
 		});
@@ -94,6 +101,28 @@ io.on("connection", (socket) => {
 		console.log(rooms.length, rooms);
 		console.log(socket.id + " disconnected");
 	});
+});
+
+const chat = io.of("/chat");
+
+chat.on("connection", (socket) => {
+	console.log(socket.id + " connected to chat room");
+	socket.broadcast.emit("new user", socket.id.slice(6, ));
+	socket.on("chat message", (message) => {
+		console.log(message);
+		socket.broadcast.emit("chat message", message, socket.id.slice(6, ));
+	});
+	socket.on("typing", () => {
+		socket.broadcast.emit("typing", socket.id.slice(6, ));
+	});
+	socket.on("disconnect", () => {
+		console.log(socket.id + " disconnected from chat room");
+		socket.broadcast.emit("playerLeft", socket.id);
+	});
+});
+express.use(require('express').static(require('path').join(__dirname, 'client')));
+express.get("/chat", (req, res) => {
+	res.sendFile(__dirname + "/client/chat.html");
 });
 
 server.listen(3000, (port) => {

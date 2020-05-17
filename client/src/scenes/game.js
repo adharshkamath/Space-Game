@@ -8,7 +8,6 @@ import {
 	addCollisions,
 } from "../helpers/extras";
 import CST from "../cst";
-import _ from "lodash";
 
 export default class Game extends Phaser.Scene {
 	constructor() {
@@ -119,6 +118,9 @@ export default class Game extends Phaser.Scene {
 			let enemy = self.enemies[self.enemyMap.get(shipID)];
 			enemy.moveShip(self, moveMade);
 		});
+		this.socket.on("youWon", function() {
+			self.scene.start("result", { result: true });
+		});
 	}
 
 	update(time, delta) {
@@ -126,6 +128,8 @@ export default class Game extends Phaser.Scene {
 			this.player.steerShip(this, time);
 		} else {
 			this.player.ship.destroy();
+			this.scene.start("result", { result: false });
+			this.socket.disconnect();
 			return;
 		}
 	}
