@@ -47,7 +47,7 @@ io.on("connection", (socket) => {
 		}
 	});
 
-	socket.on("chatMessage", function(message) {
+	socket.on("chatMessage", function (message) {
 		socket.broadcast.to(firstPlayer).emit("chatMessage", message);
 	});
 
@@ -86,7 +86,7 @@ io.on("connection", (socket) => {
 			.emit("playerMoved", moveMade, socket.id);
 	});
 	socket.on("disconnect", function () {
-		if(rooms[roomNumber].length == 2) {
+		if (rooms[roomNumber] != null && rooms[roomNumber].length == 2) {
 			io.to(firstPlayer).emit("youWon");
 		}
 		rooms[roomNumber] = rooms[roomNumber].filter(function (value) {
@@ -107,20 +107,22 @@ const chat = io.of("/chat");
 
 chat.on("connection", (socket) => {
 	console.log(socket.id + " connected to chat room");
-	socket.broadcast.emit("new user", socket.id.slice(6, ));
+	socket.broadcast.emit("new user", socket.id.slice(6));
 	socket.on("chat message", (message) => {
 		console.log(message);
-		socket.broadcast.emit("chat message", message, socket.id.slice(6, ));
+		socket.broadcast.emit("chat message", message, socket.id.slice(6));
 	});
 	socket.on("typing", () => {
-		socket.broadcast.emit("typing", socket.id.slice(6, ));
+		socket.broadcast.emit("typing", socket.id.slice(6));
 	});
 	socket.on("disconnect", () => {
 		console.log(socket.id + " disconnected from chat room");
 		socket.broadcast.emit("playerLeft", socket.id);
 	});
 });
-express.use(require('express').static(require('path').join(__dirname, 'client')));
+express.use(
+	require("express").static(require("path").join(__dirname, "client"))
+);
 express.get("/chat", (req, res) => {
 	res.sendFile(__dirname + "/client/chat.html");
 });
