@@ -1,6 +1,7 @@
 const express = require("express")();
 const server = require("http").createServer(express);
 const io = require("socket.io")(server);
+const axios = require("axios");
 const playersPerRoom = 3;
 let rooms = [null];
 
@@ -125,6 +126,32 @@ express.use(
 );
 express.get("/chat", (req, res) => {
 	res.sendFile(__dirname + "/client/chat.html");
+});
+
+const clientID = "793b3932af060f3f8372";
+
+const clientSecret = "7e70f0284aa38c94fed4570f58c63808484a141c";
+
+express.get("/profile", (req, res) => {
+	if(req.query.provider == "github") {
+		const requestToken = req.query.code;
+		console.log(requestToken);
+		axios({
+			method: "post",
+			url: `https://github.com/login/oauth/access_token?client_id=${clientID}&client_secret=${clientSecret}&code=${requestToken}`,
+			headers: {
+				accept: "application/json",
+			},
+		}).then((response) => {
+			const accessToken = response.data.access_token;
+			console.log(response.data);
+			res.redirect(`/home.html?access_token=${accessToken}`);
+		});
+	}
+});
+
+express.get("/login", (req, res) => {
+	res.sendFile(__dirname + "/client/main.html");
 });
 
 server.listen(3000, (port) => {
