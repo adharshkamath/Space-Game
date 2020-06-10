@@ -4,15 +4,15 @@ const io = require("socket.io")(server);
 const axios = require("axios").default;
 require("dotenv").config();
 const handlebars = require("express-handlebars");
-
+const chatServer = require("express")();
+const chatHttp = require("http").createServer(chatServer);
+const chatApp = require("socket.io")(chatHttp);
 const playersPerRoom = 3;
 let rooms = [null];
 
 const clientID = process.env.GITHUB_CLIENT;
 const clientSecret = process.env.GITHUB_SECRET;
 const PORT = process.env.PORT || 3000;
-
-// game=io.of("/game");
 
 io.on("connection", (socket) => {
   let firstPlayer = "";
@@ -108,7 +108,7 @@ io.on("connection", (socket) => {
   });
 });
 
-const chat = io.of("/chat");
+const chat = chatApp.of("/chat");
 
 chat.on("connection", (socket) => {
   console.log(socket.id + " connected to chat room");
@@ -126,6 +126,8 @@ chat.on("connection", (socket) => {
   });
 });
 
+// Game server stuff
+
 express.set("view engine", "hbs");
 express.engine(
   "hbs",
@@ -139,8 +141,15 @@ express.engine(
 express.use(
   require("express").static(require("path").join(__dirname, "public"))
 );
-express.get("/chat", (req, res) => {
-  res.sendFile(__dirname + "/client/chat.html");
+
+express.get("/", (req, res) => {
+  res.render("main");
+});
+
+express.get("/github-login", (req, res) => {
+  res.redirect(
+    `https://github.com/login/oauth/authorize?client_id=${clientID}`
+  );
 });
 
 express.get("/profile", async (req, res) => {
@@ -180,16 +189,30 @@ express.get("/profile", async (req, res) => {
   }
 });
 
-express.get("/", (req, res) => {
-  res.render("main");
+// Chatserver stuff
+
+chatServer.set("view engine", "hbs");
+chatServer.engine(
+  "hbs",
+  handlebars({
+    layoutsDir: __dirname + "/views/layouts",
+    extname: "hbs",
+    defaultLayout: "index",
+  })
+);
+
+chatServer.use(
+  require("express").static(require("path").join(__dirname, "public"))
+);
+
+chatServer.get("/chat", (req, res) => {
+  res.render("chat");
 });
 
-express.get("/github-login", (req, res) => {
-  res.redirect(
-    `https://github.com/login/oauth/authorize?client_id=${clientID}`
-  );
+chatHttp.listen(4000, () => {
+  console.log("Chat server listening on port " + 4000);
 });
 
-server.listen(PORT, (PORT) => {
-  console.log("Server listening on port " + PORT);
+server.listen(3000, () => {
+  console.log("Server listening on port " + 3000);
 });
