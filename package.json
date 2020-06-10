@@ -18,7 +18,7 @@
     "socket io",
     "phaser 3"
   ],
-  "author": [
+  "authors": [
     "Adharsh Kamath",
     "Sriram Rao"
   ],
@@ -29,6 +29,7 @@
   "homepage": "https://github.com/adharshkamath/Space-Game#readme",
   "dependencies": {
     "axios": "^0.19.2",
+    "cookie-parser": "^1.4.4",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-handlebars": "^4.0.4",

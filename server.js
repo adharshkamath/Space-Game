@@ -128,6 +128,7 @@ chat.on("connection", (socket) => {
 
 // Game server stuff
 
+express.use(require("cookie-parser")());
 express.set("view engine", "hbs");
 express.engine(
   "hbs",
@@ -180,7 +181,8 @@ express.get("/profile", async (req, res) => {
       };
 
       const userData = await (await axios(config)).data;
-      console.log(userData);
+      // console.log(userData);
+
       res.render("profile", { user: userData });
     } catch (error) {
       console.log("ERROR!!");
