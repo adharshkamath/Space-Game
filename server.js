@@ -1,6 +1,9 @@
 const express = require("express")();
 const server = require("http").createServer(express);
 const io = require("socket.io")(server);
+const chatServer = require("express")();
+const chatHttp = require("http").createServer(chatServer);
+const chatApp = require("socket.io")(chatHttp);
 const axios = require("axios");
 const playersPerRoom = 3;
 let rooms = [null];
@@ -104,7 +107,7 @@ io.on("connection", (socket) => {
 	});
 });
 
-const chat = io.of("/chat");
+const chat = chatApp.of("/chat");
 
 chat.on("connection", (socket) => {
 	console.log(socket.id + " connected to chat room");
@@ -124,7 +127,12 @@ chat.on("connection", (socket) => {
 express.use(
 	require("express").static(require("path").join(__dirname, "client"))
 );
-express.get("/chat", (req, res) => {
+
+chatServer.use(
+	require("express").static(require("path").join(__dirname, "client"))
+);
+
+chatServer.get("/chat", (req, res) => {
 	res.sendFile(__dirname + "/client/chat.html");
 });
 
@@ -154,6 +162,10 @@ express.get("/login", (req, res) => {
 	res.sendFile(__dirname + "/client/main.html");
 });
 
-server.listen(3000, (port) => {
-	console.log("Server listening on port " + port);
+chatHttp.listen(4000, () => {
+	console.log("Chat server listening on port " + 4000);
+});
+
+server.listen(3000, () => {
+	console.log("Server listening on port " + 3000);
 });
