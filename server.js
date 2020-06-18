@@ -189,11 +189,15 @@ express.get("/profile", async (req, res) => {
 
       const userData = await (await axios(config)).data;
 
-      const oldUser = await User.find({ firstName: userData.login }).lean();
+      const oldUser = await User.findOne({ userName: userData.login }).lean();
       if (oldUser) {
         console.log("Old user!");
-        console.log(oldUser);
-        res.send("user found");
+		console.log(oldUser);
+		res.cookie("login", oldUser._id, {
+			maxAge: 86400000,
+			httpOnly: true,
+		  });
+		res.render("profile", { userName: oldUser.userName, wins: oldUser.wins });
       } else {
         const user = new User({
           userName: userData.login,
@@ -219,7 +223,7 @@ express.get("/profile", async (req, res) => {
     const DBuser = await User.findById(token).lean();
     console.log(DBuser.dateJoined.getFullYear());
     res.cookie("login", token, { maxAge: 86400000, httpOnly: true });
-    res.render("profile", { user: DBuser });
+    res.render("profile", { userName: DBuser.userName, wins: DBuser.wins });
   }
 });
 
