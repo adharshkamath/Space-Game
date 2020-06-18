@@ -31,103 +31,9 @@ const addAsteroids = (scene) => {
 	return asteroids;
 };
 
-const addMeteors = (scene) => {
-	let velocity_x = Phaser.Math.Between(-500, 500);
-	let velocity_y = Phaser.Math.Between(-500, 500);
-	let meteors = scene.physics.add.group({
-		key: CST.ASSETS.EXTRAS.MED_ASTROID,
-		quantity: 3,
-		bounceX: 0.8,
-		bounceY: 0.8,
-		collideWorldBounds: true,
-		velocityX: velocity_x,
-		velocityY: velocity_y,
-	});
-	Phaser.Actions.RandomRectangle(
-		meteors.getChildren(),
-		scene.physics.world.bounds
-	);
-	meteors.velocity_x = velocity_x;
-	meteors.velocity_y = velocity_y;
-	scene.physics.add.collider(meteors);
-	return meteors;
-};
-
-const addRocks = (scene) => {
-	let velocity_x = Phaser.Math.Between(-700, 700);
-	let velocity_y = Phaser.Math.Between(-700, 700);
-	let rocks = scene.physics.add.group({
-		key: CST.ASSETS.EXTRAS.SMALL_ASTEROID,
-		quantity: 4,
-		bounceX: 1,
-		bounceY: 1,
-		collideWorldBounds: true,
-		velocityX: velocity_x,
-		velocityY: velocity_y,
-	});
-	Phaser.Actions.RandomRectangle(
-		rocks.getChildren(),
-		scene.physics.world.bounds
-	);
-	rocks.velocity_x = velocity_x;
-	rocks.velocity_y = velocity_y;
-	scene.physics.add.collider(rocks);
-	return rocks;
-};
-
-const addPowerups = (scene) => {
-	let powerups = scene.physics.add.group({
-		key: CST.ASSETS.EXTRAS.BOOST,
-		quantity: 5,
-		bounceX: 1,
-		bounceY: 1,
-		velocityX: 0,
-		velocityY: 0,
-		angularVelocity: 10,
-	});
-	Phaser.Actions.RandomRectangle(
-		powerups.getChildren(),
-		scene.physics.world.bounds
-	);
-	scene.physics.add.collider(powerups);
-	return powerups;
-};
-
 const addExtras = (scene) => {
 	let extras = {};
 	extras.asteroids = addAsteroids(scene);
-	extras.powerups = addPowerups(scene);
-	extras.meteors = addMeteors(scene);
-	extras.rocks = addRocks(scene);
-	scene.physics.add.collider(extras.asteroids, extras.powerups);
-	scene.physics.add.collider(extras.asteroids, extras.meteors);
-	scene.physics.add.collider(extras.asteroids, extras.rocks);
-	scene.physics.add.collider(extras.powerups, extras.meteors);
-	scene.physics.add.collider(extras.powerups, extras.rocks);
-	scene.physics.add.collider(extras.meteors, extras.rocks);
-	scene.physics.add.collider(extras.meteors, scene.player.ship);
-	scene.physics.add.collider(extras.rocks, scene.player.ship);
-	scene.physics.add.collider(extras.rocks, scene.player.bullets, function (
-		bullet,
-		rock
-	) {
-		rock.destroy();
-		bullet.destroy();
-	});
-	scene.physics.add.collider(extras.meteors, scene.player.bullets, function (
-		bullet,
-		meteor
-	) {
-		meteor.destroy();
-		bullet.destroy();
-	});
-	scene.physics.add.collider(extras.powerups, scene.player.bullets, function (
-		bullet,
-		powerup
-	) {
-		powerup.destroy();
-		bullet.destroy();
-	});
 	scene.physics.add.collider(
 		extras.asteroids,
 		scene.player.bullets,
@@ -156,14 +62,6 @@ const addExtras = (scene) => {
 			scene.sound.play(CST.ASSETS.SHIPS.EXPLOSION_AUDIO);
 			asteroid.destroy();
 		}
-	});
-	scene.physics.add.collider(extras.powerups, scene.player.ship, function (
-		ship,
-		powerup
-	) {
-		scene.sound.play(CST.ASSETS.EXTRAS.BOOST_AUDIO);
-		scene.player.powerups++;
-		powerup.destroy();
 	});
 	return extras;
 };
@@ -189,25 +87,11 @@ const getExtrasConfig = (extras) => {
 	getLocations(extras.asteroids.getChildren(), config.asteroids.locs);
 	config.asteroids.velocity_x = extras.asteroids.velocity_x;
 	config.asteroids.velocity_y = extras.asteroids.velocity_y;
-	config.meteors = {};
-	config.meteors.locs = [];
-	getLocations(extras.meteors.getChildren(), config.meteors.locs);
-	config.meteors.velocity_x = extras.meteors.velocity_x;
-	config.meteors.velocity_y = extras.meteors.velocity_y;
-	config.rocks = {};
-	config.rocks.locs = [];
-	getLocations(extras.rocks.getChildren(), config.rocks.locs);
-	config.rocks.velocity_x = extras.rocks.velocity_x;
-	config.rocks.velocity_y = extras.rocks.velocity_y;
-	config.powerups = {};
-	config.powerups.locs = [];
-	getLocations(extras.powerups.getChildren(), config.powerups.locs);
 	return config;
 };
 
 const addExtrasFromConfig = (scene, config) => {
 	let extras = {};
-	extras.powerups = addPowerups(scene);
 	extras.asteroids = scene.physics.add.group({
 		key: CST.ASSETS.EXTRAS.BIG_ASTEROID,
 		quantity: 2,
@@ -226,55 +110,7 @@ const addExtrasFromConfig = (scene, config) => {
 			CST.ASSETS.EXTRAS.BIG_ASTEROID_EXPLOSION
 		),
 	});
-	extras.meteors = scene.physics.add.group({
-		key: CST.ASSETS.EXTRAS.MED_ASTROID,
-		quantity: 3,
-		bounceX: 0.8,
-		bounceY: 0.8,
-		collideWorldBounds: true,
-		velocityX: config.meteors.velocity_x,
-		velocityY: config.meteors.velocity_y,
-	});
-	scene.physics.add.collider(extras.meteors);
-	extras.rocks = scene.physics.add.group({
-		key: CST.ASSETS.EXTRAS.MED_ASTROID,
-		quantity: 3,
-		bounceX: 0.8,
-		bounceY: 0.8,
-		collideWorldBounds: true,
-		velocityX: config.rocks.velocity_x,
-		velocityY: config.rocks.velocity_y,
-	});
-	scene.physics.add.collider(extras.rocks);
-	scene.physics.add.collider(extras.asteroids, extras.powerups);
-	scene.physics.add.collider(extras.asteroids, extras.meteors);
-	scene.physics.add.collider(extras.asteroids, extras.rocks);
-	scene.physics.add.collider(extras.powerups, extras.meteors);
-	scene.physics.add.collider(extras.powerups, extras.rocks);
-	scene.physics.add.collider(extras.meteors, extras.rocks);
-	scene.physics.add.collider(extras.meteors, scene.player.ship);
-	scene.physics.add.collider(extras.rocks, scene.player.ship);
-	scene.physics.add.collider(extras.rocks, scene.player.bullets, function (
-		bullet,
-		rock
-	) {
-		rock.destroy();
-		bullet.destroy();
-	});
-	scene.physics.add.collider(extras.meteors, scene.player.bullets, function (
-		bullet,
-		meteor
-	) {
-		meteor.destroy();
-		bullet.destroy();
-	});
-	scene.physics.add.collider(extras.powerups, scene.player.bullets, function (
-		bullet,
-		powerup
-	) {
-		powerup.destroy();
-		bullet.destroy();
-	});
+
 	scene.physics.add.collider(
 		extras.asteroids,
 		scene.player.bullets,
@@ -304,45 +140,12 @@ const addExtrasFromConfig = (scene, config) => {
 			asteroid.destroy();
 		}
 	});
-	scene.physics.add.collider(extras.powerups, scene.player.ship, function (
-		ship,
-		powerup
-	) {
-		scene.sound.play(CST.ASSETS.EXTRAS.BOOST_AUDIO);
-		scene.player.powerups++;
-		powerup.destroy();
-	});
+
 	setLocations(extras.asteroids.getChildren(), config.asteroids.locs);
-	setLocations(extras.meteors.getChildren(), config.meteors.locs);
-	setLocations(extras.rocks.getChildren(), config.rocks.locs);
-	setLocations(extras.powerups.getChildren(), config.powerups.locs);
 	return extras;
 };
 
 const addCollisions = (enemy, scene) => {
-	scene.physics.add.collider(scene.extras.meteors, enemy.ship);
-	scene.physics.add.collider(scene.extras.rocks, enemy.ship);
-	scene.physics.add.collider(scene.extras.rocks, enemy.bullets, function (
-		bullet,
-		rock
-	) {
-		rock.destroy();
-		bullet.destroy();
-	});
-	scene.physics.add.collider(scene.extras.meteors, enemy.bullets, function (
-		bullet,
-		meteor
-	) {
-		meteor.destroy();
-		bullet.destroy();
-	});
-	scene.physics.add.collider(scene.extras.powerups, enemy.bullets, function (
-		bullet,
-		powerup
-	) {
-		powerup.destroy();
-		bullet.destroy();
-	});
 	scene.physics.add.collider(scene.extras.asteroids, enemy.bullets, function (
 		asteroid,
 		bullet
@@ -371,14 +174,7 @@ const addCollisions = (enemy, scene) => {
 			asteroid.destroy();
 		}
 	});
-	scene.physics.add.collider(scene.extras.powerups, enemy, function (
-		ship,
-		powerup
-	) {
-		scene.sound.play(CST.ASSETS.EXTRAS.BOOST_AUDIO);
-		enemy.powerups++;
-		powerup.destroy();
-	});
+
 	scene.physics.add.collider(enemy.bullets, scene.player.ship, function (
 		bullet,
 		ship

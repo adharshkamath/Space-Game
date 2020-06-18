@@ -24,6 +24,17 @@ class Bullet extends Phaser.Physics.Arcade.Image {
 		this.body.velocity.y *= 2;
 	}
 
+	defenseFire(turret) {
+		this.lifeSpan = 1000;
+		this.setVisible(true);
+		this.setActive(true);
+		this.setAngle(ship.body.rotation);
+		this.setPosition(turret.body.x, turret.body.y);
+		this.body.reset(turret.body.x, turret.body.y);
+		this.body.velocity.x *= 2;
+		this.body.velocity.y *= 2;
+	}
+
 	update(time, delta) {
 		this.lifeSpan -= delta;
 		if (this.lifeSpan <= 0) {
