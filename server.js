@@ -1,4 +1,5 @@
 const express = require("express")();
+const mongoose = require("mongoose");
 const server = require("http").createServer(express);
 const io = require("socket.io")(server);
 const axios = require("axios").default;
@@ -7,12 +8,13 @@ const handlebars = require("express-handlebars");
 const chatServer = require("express")();
 const chatHttp = require("http").createServer(chatServer);
 const chatApp = require("socket.io")(chatHttp);
+const User = require("./models/userModel");
+
 const playersPerRoom = 3;
 let rooms = [null];
 
 const clientID = process.env.GITHUB_CLIENT;
 const clientSecret = process.env.GITHUB_SECRET;
-const PORT = process.env.PORT || 3000;
 
 io.on("connection", (socket) => {
   let firstPlayer = "";
@@ -144,7 +146,12 @@ express.use(
 );
 
 express.get("/", (req, res) => {
-  res.render("main");
+  let token = req.cookies["login"];
+  if (!token) {
+    res.render("main");
+  } else {
+    res.redirect("/profile");
+  }
 });
 
 express.get("/github-login", (req, res) => {
@@ -181,13 +188,38 @@ express.get("/profile", async (req, res) => {
       };
 
       const userData = await (await axios(config)).data;
-      // console.log(userData);
 
-      res.render("profile", { user: userData });
+      const oldUser = await User.find({ firstName: userData.login }).lean();
+      if (oldUser) {
+        console.log("Old user!");
+        console.log(oldUser);
+        res.send("user found");
+      } else {
+        const user = new User({
+          userName: userData.login,
+        });
+
+        const DBuser = await user.save();
+        res.cookie("login", DBuser._id, {
+          maxAge: 86400000,
+          httpOnly: true,
+        });
+        console.log("Saved to DB");
+        console.log(DBuser);
+        const NewUser = { userName: DBuser.userName, wins: DBuser.wins };
+
+        res.render("profile", { userName: DBuser.userName, wins: DBuser.wins });
+      }
     } catch (error) {
       console.log("ERROR!!");
       console.log(error);
     }
+  } else {
+    const token = req.cookies["login"];
+    const DBuser = await User.findById(token).lean();
+    console.log(DBuser.dateJoined.getFullYear());
+    res.cookie("login", token, { maxAge: 86400000, httpOnly: true });
+    res.render("profile", { user: DBuser });
   }
 });
 
@@ -210,6 +242,14 @@ chatServer.use(
 chatServer.get("/chat", (req, res) => {
   res.render("chat");
 });
+
+mongoose
+  .connect(process.env.DB_CONNECTION, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(console.log("Connected to DB"))
+  .catch((err) => console.log(err));
 
 chatHttp.listen(4000, () => {
   console.log("Chat server listening on port " + 4000);

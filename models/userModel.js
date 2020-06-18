@@ -1,10 +1,22 @@
 const mongoose = require("mongoose");
 
 const userSchema = mongoose.Schema({
-  userName: String,
-  gamesPlayed: Number,
-  wins: Number,
-  dateJoined: Date,
+  userName: {
+    type: String,
+    required: true,
+  },
+  gamesPlayed: {
+    type: Number,
+    default: 0,
+  },
+  wins: {
+    type: Number,
+    default: 0,
+  },
+  dateJoined: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
-module.exports = mongoose.model("UserModel", userSchema);
+module.exports = mongoose.model("User", userSchema);
