@@ -192,12 +192,22 @@ express.get("/profile", async (req, res) => {
       const oldUser = await User.findOne({ userName: userData.login }).lean();
       if (oldUser) {
         console.log("Old user!");
-		console.log(oldUser);
-		res.cookie("login", oldUser._id, {
-			maxAge: 86400000,
-			httpOnly: true,
-		  });
-		res.render("profile", { userName: oldUser.userName, wins: oldUser.wins });
+        console.log(oldUser);
+        res.cookie("login", oldUser._id, {
+          maxAge: 86400000,
+          httpOnly: true,
+        });
+        res.render("profile", {
+          userName: oldUser.userName,
+          gamesPlayed: oldUser.gamesPlayed,
+          wins:
+            oldUser.gamesPlayed === 0
+              ? 0
+              : (oldUser.wins / oldUser.gamesPlayed) * 100,
+          dateJoined: `${oldUser.dateJoined.getDate()}/${
+            oldUser.dateJoined.getMonth() + 1
+          }/${oldUser.dateJoined.getFullYear()}`,
+        });
       } else {
         const user = new User({
           userName: userData.login,
@@ -210,9 +220,19 @@ express.get("/profile", async (req, res) => {
         });
         console.log("Saved to DB");
         console.log(DBuser);
-        const NewUser = { userName: DBuser.userName, wins: DBuser.wins };
+        // const NewUser = { userName: DBuser.userName, wins: DBuser.wins };
 
-        res.render("profile", { userName: DBuser.userName, wins: DBuser.wins });
+        res.render("profile", {
+          userName: DBuser.userName,
+          gamesPlayed: DBuser.gamesPlayed,
+          wins:
+            DBuser.gamesPlayed === 0
+              ? 0
+              : (DBuser.wins / DBuser.gamesPlayed) * 100,
+          dateJoined: `${DBuser.dateJoined.getDate()}/${
+            DBuser.dateJoined.getMonth() + 1
+          }/${DBuser.dateJoined.getFullYear()}`,
+        });
       }
     } catch (error) {
       console.log("ERROR!!");
@@ -223,7 +243,15 @@ express.get("/profile", async (req, res) => {
     const DBuser = await User.findById(token).lean();
     console.log(DBuser.dateJoined.getFullYear());
     res.cookie("login", token, { maxAge: 86400000, httpOnly: true });
-    res.render("profile", { userName: DBuser.userName, wins: DBuser.wins });
+    res.render("profile", {
+      userName: DBuser.userName,
+      gamesPlayed: DBuser.gamesPlayed,
+      wins:
+        DBuser.gamesPlayed === 0 ? 0 : (DBuser.wins / DBuser.gamesPlayed) * 100,
+      dateJoined: `${DBuser.dateJoined.getDate()}/${
+        DBuser.dateJoined.getMonth() + 1
+      }/${DBuser.dateJoined.getFullYear()}`,
+    });
   }
 });
 
@@ -235,7 +263,7 @@ chatServer.engine(
   handlebars({
     layoutsDir: __dirname + "/views/layouts",
     extname: "hbs",
-    defaultLayout: "index",
+    defaultLayout: "chat",
   })
 );
 
