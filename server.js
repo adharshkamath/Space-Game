@@ -89,6 +89,19 @@ io.on("connection", (socket) => {
     }
   });
 
+  socket.on("playerID", async function(id) {
+    console.log(id);
+    await User.findOneAndUpdate({_id: id.slice(3, id.length-1)}, {$inc: { gamesPlayed:1 }}, function(error, result) {
+      console.log(result);
+    });
+  });
+
+  socket.on("playerWon", async function(id) {
+    await User.findOneAndUpdate({_id: id.slice(3, id.length-1)}, {$inc: { wins:1 }}, function(error, result) {
+      console.log(result);
+    });
+  })
+
   socket.on("playerMoved", function (moveMade) {
     socket.broadcast.to(firstPlayer).emit("playerMoved", moveMade, socket.id);
   });
@@ -195,7 +208,6 @@ express.get("/profile", async (req, res) => {
 		console.log(oldUser);
 		res.cookie("login", oldUser._id, {
 			maxAge: 86400000,
-			httpOnly: true,
 		  });
 		res.render("profile", { userName: oldUser.userName, wins: oldUser.wins });
       } else {
@@ -206,7 +218,6 @@ express.get("/profile", async (req, res) => {
         const DBuser = await user.save();
         res.cookie("login", DBuser._id, {
           maxAge: 86400000,
-          httpOnly: true,
         });
         console.log("Saved to DB");
         console.log(DBuser);
@@ -222,7 +233,7 @@ express.get("/profile", async (req, res) => {
     const token = req.cookies["login"];
     const DBuser = await User.findById(token).lean();
     console.log(DBuser.dateJoined.getFullYear());
-    res.cookie("login", token, { maxAge: 86400000, httpOnly: true });
+    res.cookie("login", token, { maxAge: 86400000 });
     res.render("profile", { userName: DBuser.userName, wins: DBuser.wins });
   }
 });

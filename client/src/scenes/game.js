@@ -114,14 +114,32 @@ export default class Game extends Phaser.Scene {
     });
     this.socket.on("startGame", function () {
       self.scene.resume();
+      self.socket.emit("playerID", self.getCookie("login"));
     });
     this.socket.on("playerMoved", function (moveMade, shipID) {
       let enemy = self.enemies[self.enemyMap.get(shipID)];
       enemy.moveShip(self, moveMade);
     });
     this.socket.on("youWon", function () {
+      self.socket.emit("playerWon", self.getCookie("login"));
       self.scene.start("result", { result: true });
     });
+  }
+
+  getCookie(cname) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for(var i = 0; i <ca.length; i++) {
+      var c = ca[i];
+      while (c.charAt(0) == ' ') {
+        c = c.substring(1);
+      }
+      if (c.indexOf(name) == 0) {
+        return c.substring(name.length, c.length);
+      }
+    }
+    return "";
   }
 
   update(time, delta) {
