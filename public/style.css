@@ -24,7 +24,7 @@ body {
 }
 
 body {
-  background-image: url("./assets/space-bg.jpg");
+  background-image: url(".src/assets/space-bg.jpg");
   background-repeat: no-repeat;
   background-attachment: fixed;
   background-size: cover;
