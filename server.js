@@ -175,6 +175,10 @@ express.get("/", (req, res) => {
   }
 });
 
+express.get("/game", (req, res) => {
+    res.render("game");
+});
+
 express.get("/github-login", (req, res) => {
   res.redirect(
     `https://github.com/login/oauth/authorize?client_id=${clientID}`
@@ -260,7 +264,8 @@ express.get("/profile", async (req, res) => {
   } else {
     const token = req.cookies["login"];
     const DBuser = await User.findById(token).lean();
-    console.log(DBuser.dateJoined.getFullYear());
+    console.log(DBuser);
+    // console.log(DBuser.dateJoined.getFullYear());
     res.cookie("login", token, { maxAge: 86400000 });
     res.render("profile", {
       userName: DBuser.userName,
