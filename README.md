@@ -13,6 +13,8 @@ To start the development servers simutaneously (game server and the Webpack dev 
 npm run-script dev
 ```
 
+To setup this game as is, you will need to create a GitHub app. Follow [these](https://docs.github.com/en/free-pro-team@latest/developers/apps/creating-an-oauth-app) instructions to create an OAuth app and generating app tokens.
+
 ## Demo
 
 #### Home Screen
