@@ -34,7 +34,7 @@
     "express": "^4.17.1",
     "express-handlebars": "^5.2.0",
     "mongodb": "^3.6.2",
-    "mongoose": "^5.10.11",
+    "mongoose": "^5.10.13",
     "socket.io": "^3.0.0"
   },
   "devDependencies": {
